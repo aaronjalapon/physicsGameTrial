@@ -1,0 +1,210 @@
+.measurements {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.measurements h2 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 10px;
+  animation: slideInRight 0.4s ease-out;
+}
+
+.measurement-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 4px solid #e0e0e0;
+  transition: all 0.3s ease;
+  animation: slideInRight 0.5s ease-out backwards;
+}
+
+.measurement-card:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.measurement-card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.measurement-card:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+.measurement-card:nth-child(5) {
+  animation-delay: 0.2s;
+}
+
+.measurement-card:hover {
+  background: #f5f5ff;
+  border-left-color: #667eea;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.measurement-card.highlight {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border-left-color: #667eea;
+  font-weight: 600;
+}
+
+.measurement-card.highlight:hover {
+  animation: highlight-pulse 0.6s ease-out;
+}
+
+@keyframes highlight-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(102, 126, 234, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+  }
+}
+
+.measurement-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.measurement-item label {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.measurement-item .value {
+  color: #667eea;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: 'Courier New', monospace;
+  background: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 100px;
+  text-align: right;
+  animation: countUp 0.5s ease-out;
+  transition: all 0.2s ease;
+}
+
+.measurement-item .value:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.measurement-card.highlight .value {
+  color: #764ba2;
+  font-size: 1.2rem;
+}
+
+.divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+  margin: 10px 0;
+  animation: slideInRight 0.5s ease-out 0.25s both;
+}
+
+.results-section {
+  margin-top: 15px;
+  animation: slideInRight 0.5s ease-out 0.3s both;
+}
+
+.results-section h3 {
+  color: #667eea;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e0e0e0;
+  animation: slideInRight 0.5s ease-out 0.35s both;
+}
+
+.physics-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  animation: slideInRight 0.6s ease-out 0.4s both;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+}
+
+.physics-info h3 {
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 8px;
+  animation: glow 2s ease-in-out infinite;
+}
+
+.formula {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  transition: all 0.2s ease;
+}
+
+.formula:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.formula p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .measurements {
+    gap: 12px;
+  }
+
+  .measurement-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .measurement-item .value {
+    align-self: flex-start;
+  }
+}

@@ -1,0 +1,132 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.app-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  animation: slideDown 0.6s ease-out;
+}
+
+.app-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.app-header p {
+  font-size: 1rem;
+  opacity: 0.9;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.app-container {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  padding: 20px;
+  max-width: 100%;
+}
+
+.left-panel {
+  flex: 0 0 320px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  overflow-y: auto;
+  animation: fadeInScale 0.5s ease-out 0.1s both;
+}
+
+.center-panel {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  animation: fadeInScale 0.5s ease-out 0.2s both;
+}
+
+.right-panel {
+  flex: 0 0 320px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  overflow-y: auto;
+  animation: fadeInScale 0.5s ease-out 0.3s both;
+}
+
+@media (max-width: 1200px) {
+  .app-container {
+    flex-wrap: wrap;
+  }
+
+  .left-panel,
+  .right-panel {
+    flex: 0 0 calc(50% - 10px);
+  }
+
+  .center-panel {
+    flex: 0 0 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .left-panel,
+  .center-panel,
+  .right-panel {
+    flex: 0 0 auto;
+  }
+
+  .app-header h1 {
+    font-size: 1.8rem;
+  }
+}
