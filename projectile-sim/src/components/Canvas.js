@@ -1,116 +1,124 @@
 import React, { useEffect, useRef } from 'react';
 import './Canvas.css';
 
-const Canvas = React.forwardRef(
-  ({ trajectoryData, simulationRunning, onSimulationEnd }, ref) => {
-    const canvasRef = useRef(null);
-    const animationRef = useRef(null);
-    const currentIndexRef = useRef(0);
-    const particlesRef = useRef([]);
+// Draw a simple stick figure character with animated arm
+function drawCharacter(ctx, x, y, armAngle, isThrowing) {
+  ctx.save();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = '#333';
+  ctx.fillStyle = '#FFD580';
 
-    useEffect(() => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+  // Head
+  ctx.beginPath();
+  ctx.arc(x, y - 38, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
 
-      let animationFrameId;
-      const render = () => {
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width;
-        const height = canvas.height;
+  // Body
+  ctx.beginPath();
+  ctx.moveTo(x, y - 24);
+  ctx.lineTo(x, y + 16);
+  ctx.stroke();
 
-        // Create gradient background
-        const gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, '#e8f4f8');
-        gradient.addColorStop(1, '#d4e8f0');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
+  // Left leg
+  ctx.beginPath();
+  ctx.moveTo(x, y + 16);
+  ctx.lineTo(x - 12, y + 38);
+  ctx.stroke();
 
-        // Draw animated clouds
-        drawAnimatedClouds(ctx, width, height);
-        
-        // Update and draw particles
-        updateParticles(particlesRef.current, ctx);
-        drawParticles(particlesRef.current, ctx);
+  // Right leg
+  ctx.beginPath();
+  ctx.moveTo(x, y + 16);
+  ctx.lineTo(x + 12, y + 38);
+  ctx.stroke();
 
-        // Draw animated grid
-        drawAnimatedGrid(ctx, width, height);
+  // Left arm (static)
+  ctx.beginPath();
+  ctx.moveTo(x, y - 10);
+  ctx.lineTo(x - 18, y + 6);
+  ctx.stroke();
 
-        // Draw ground with animation
-        drawAnimatedGround(ctx, width, height);
+  // Right arm (animated)
+  ctx.save();
+  ctx.translate(x, y - 10);
+  ctx.rotate(armAngle);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(24, 0);
+  ctx.strokeStyle = isThrowing ? '#FF6B6B' : '#333';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+  // Draw hand
+  ctx.beginPath();
+  ctx.arc(24, 0, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#FFD580';
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
 
-        if (trajectoryData.points.length > 0) {
-          // Draw trajectory path with animation
-          drawAnimatedTrajectory(ctx, trajectoryData.points, width, height);
+  ctx.restore();
+}
 
-          // Draw projectile at current position during animation
-          if (simulationRunning && currentIndexRef.current < trajectoryData.points.length) {
-            const point = trajectoryData.points[currentIndexRef.current];
-            drawAnimatedProjectile(ctx, point, width, height);
-            
-            // Create particle effects
-            if (currentIndexRef.current % 3 === 0) {
-              createParticles(particlesRef.current, point, width, height);
-            }
-          } else if (!simulationRunning && trajectoryData.points.length > 0) {
-            // Draw at end position
-            const point = trajectoryData.points[trajectoryData.points.length - 1];
-            drawAnimatedProjectile(ctx, point, width, height);
-          }
+// Draw basketball hoops or targets based on game level
+function drawGameTargets(ctx, level) {
+  const targets = [
+    { x: 300, y: 480, radius: 20, label: '🏀' }, // Level 1: close
+    { x: 450, y: 400, radius: 18, label: '🏀' }, // Level 2: medium distance, elevated
+    { x: 600, y: 350, radius: 16, label: '🏀' }, // Level 3: far, higher
+  ];
 
-          // Draw measurement markers
-          if (trajectoryData.maxHeight > 0) {
-            drawAnimatedMaxHeightLine(ctx, trajectoryData, width, height);
-          }
-        }
+  const target = targets[Math.min(level - 1, 2)];
 
-        animationFrameId = requestAnimationFrame(render);
-      };
+  // Draw hoop stand/pole
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(target.x, target.y);
+  ctx.lineTo(target.x, target.y + 60);
+  ctx.stroke();
 
-      render();
+  // Draw hoop rim
+  ctx.strokeStyle = '#FF6B00';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2);
+  ctx.stroke();
 
-      return () => {
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-        }
-      };
-    }, [trajectoryData, simulationRunning]);
-
-    useEffect(() => {
-      if (!simulationRunning) {
-        currentIndexRef.current = 0;
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-        return;
-      }
-
-      const animate = () => {
-        if (currentIndexRef.current < trajectoryData.points.length) {
-          currentIndexRef.current++;
-          animationRef.current = requestAnimationFrame(animate);
-        } else {
-          onSimulationEnd();
-        }
-      };
-
-      animationRef.current = requestAnimationFrame(animate);
-
-      return () => {
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-      };
-    }, [simulationRunning, trajectoryData, onSimulationEnd]);
-
-    return (
-      <div className="canvas-container">
-        <canvas ref={canvasRef} width={800} height={600} className="canvas" />
-      </div>
-    );
+  // Draw net (lines)
+  ctx.strokeStyle = 'rgba(255, 200, 0, 0.6)';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 8; i++) {
+    ctx.beginPath();
+    const angle = (i / 8) * Math.PI * 2;
+    const x1 = target.x + Math.cos(angle) * target.radius;
+    const y1 = target.y + Math.sin(angle) * target.radius;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(target.x, target.y + 30);
+    ctx.stroke();
   }
-);
 
-Canvas.displayName = 'Canvas';
+  // Draw hit detection zone (larger, slightly transparent)
+  const hitRadius = target.radius + 15; // Match the hitRadius in App.js
+  ctx.fillStyle = 'rgba(76, 175, 80, 0.15)';
+  ctx.beginPath();
+  ctx.arc(target.x, target.y, hitRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Draw target zone indicator border
+  ctx.strokeStyle = 'rgba(76, 175, 80, 0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.arc(target.x, target.y, hitRadius, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw label
+  ctx.fillStyle = '#333';
+  ctx.font = 'bold 12px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Level ${level}`, target.x, target.y - target.radius - 15);
+}
 
 // Grid drawing functions
 const drawAnimatedGrid = (ctx, width, height) => {
@@ -229,6 +237,7 @@ const drawAnimatedProjectile = (ctx, point, width, height) => {
 };
 
 // Projectile drawing functions
+// eslint-disable-next-line no-unused-vars
 const drawProjectile = (ctx, point, width, height) => {
   const scale = 4;
   const startX = 50;
@@ -298,6 +307,7 @@ const drawAnimatedVector = (ctx, x, y, vx, vy, color, time) => {
   ctx.shadowColor = 'transparent';
 };
 
+// eslint-disable-next-line no-unused-vars
 const drawMaxHeightLine = (ctx, trajectoryData, width, height) => {
   const scale = 4;
   const startY = height - 50;
@@ -434,5 +444,158 @@ const drawAnimatedClouds = (ctx, width, height) => {
     ctx.fill();
   }
 };
+
+const Canvas = React.forwardRef(
+  ({ trajectoryData, simulationRunning, onSimulationEnd, gameMode, level, onHit, lastResult }, ref) => {
+    const canvasRef = useRef(null);
+    const animationRef = useRef(null);
+    const currentIndexRef = useRef(0);
+    const particlesRef = useRef([]);
+
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      let animationFrameId;
+      const render = () => {
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Create gradient background
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#e8f4f8');
+        gradient.addColorStop(1, '#d4e8f0');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Draw animated clouds
+        drawAnimatedClouds(ctx, width, height);
+
+        // Draw character at launch point
+        const characterX = 50;
+        const characterY = height - 50;
+        let armAngle = -Math.PI / 2.5;
+        // Animate arm during throw
+        if (simulationRunning && trajectoryData.points.length > 0 && currentIndexRef.current < 20) {
+          // Arm moves up as the throw starts
+          armAngle = -Math.PI / 2.5 + (currentIndexRef.current / 20) * (trajectoryData.points[0].angle * Math.PI / 180 - (-Math.PI / 2.5));
+        }
+        drawCharacter(ctx, characterX, characterY, armAngle, simulationRunning);
+
+        // Draw game targets if in game mode
+        if (gameMode && level) {
+          drawGameTargets(ctx, level);
+        }
+
+        // Update and draw particles
+        updateParticles(particlesRef.current, ctx);
+        drawParticles(particlesRef.current, ctx);
+
+        // Draw animated grid
+        drawAnimatedGrid(ctx, width, height);
+
+        // Draw ground with animation
+        drawAnimatedGround(ctx, width, height);
+
+        if (trajectoryData.points.length > 0) {
+          // Draw trajectory path with animation
+          drawAnimatedTrajectory(ctx, trajectoryData.points, width, height);
+
+          // Draw projectile at current position during animation
+          if (simulationRunning && currentIndexRef.current < trajectoryData.points.length) {
+            const point = trajectoryData.points[currentIndexRef.current];
+            drawAnimatedProjectile(ctx, point, width, height);
+            
+            // Create particle effects
+            if (currentIndexRef.current % 3 === 0) {
+              createParticles(particlesRef.current, point, width, height);
+            }
+          } else if (!simulationRunning && trajectoryData.points.length > 0) {
+            // Draw at end position
+            const point = trajectoryData.points[trajectoryData.points.length - 1];
+            drawAnimatedProjectile(ctx, point, width, height);
+          }
+
+          // Draw measurement markers
+          if (trajectoryData.maxHeight > 0) {
+            drawAnimatedMaxHeightLine(ctx, trajectoryData, width, height);
+          }
+        }
+
+        animationFrameId = requestAnimationFrame(render);
+      };
+
+      render();
+
+      return () => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      };
+    }, [trajectoryData, simulationRunning, gameMode, level]);
+
+    useEffect(() => {
+      if (!simulationRunning) {
+        currentIndexRef.current = 0;
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+        }
+        return;
+      }
+
+      const animate = () => {
+        if (currentIndexRef.current < trajectoryData.points.length) {
+          currentIndexRef.current++;
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          onSimulationEnd();
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animate);
+
+      return () => {
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+        }
+      };
+    }, [simulationRunning, trajectoryData, onSimulationEnd]);
+
+    // Check for hits after simulation ends
+    useEffect(() => {
+      if (!simulationRunning && trajectoryData.points.length > 0 && gameMode) {
+        const lastPoint = trajectoryData.points[trajectoryData.points.length - 1];
+        
+        // Pass the raw physics coordinates directly (x, y in meters)
+        // The hit detection in App.js will work with the actual physics units
+        const impactX = lastPoint.x;
+        const impactY = lastPoint.y;
+        
+        // Debug log to verify coordinates
+        console.log('=== CANVAS HIT DETECTION ===');
+        console.log('Last Point (physics coords):', lastPoint);
+        console.log('Impact X (meters):', impactX);
+        console.log('Impact Y (meters):', impactY);
+        console.log('===========================');
+        
+        // Call hit detection in parent (with slight delay for animation)
+        const timer = setTimeout(() => {
+          onHit && onHit(impactX, impactY);
+        }, 300);
+
+        return () => clearTimeout(timer);
+      }
+    }, [simulationRunning, trajectoryData, onHit, gameMode]);
+
+    return (
+      <div className="canvas-container">
+        <canvas ref={canvasRef} width={800} height={600} className="canvas" />
+      </div>
+    );
+  }
+);
+
+Canvas.displayName = 'Canvas';
 
 export default Canvas;

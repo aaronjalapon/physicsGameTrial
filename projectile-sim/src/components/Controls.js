@@ -6,22 +6,53 @@ const Controls = ({
   onParameterChange,
   onLaunch,
   onReset,
-  simulationRunning
+  simulationRunning,
+  gameMode
 }) => {
   const handleVelocityChange = (e) => {
-    const newValue = parseFloat(e.target.value);
+    let newValue = parseFloat(e.target.value);
+    // Clamp between 1 and 150
+    newValue = Math.max(1, Math.min(150, newValue));
     onParameterChange({
       ...parameters,
       initialVelocity: newValue
     });
   };
 
+  const handleVelocityInputChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || value === '-') return;
+    let newValue = parseFloat(value);
+    if (!isNaN(newValue)) {
+      newValue = Math.max(1, Math.min(150, newValue));
+      onParameterChange({
+        ...parameters,
+        initialVelocity: newValue
+      });
+    }
+  };
+
   const handleAngleChange = (e) => {
-    const newValue = parseFloat(e.target.value);
+    let newValue = parseFloat(e.target.value);
+    // Clamp between 0 and 90
+    newValue = Math.max(0, Math.min(90, newValue));
     onParameterChange({
       ...parameters,
       angle: newValue
     });
+  };
+
+  const handleAngleInputChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || value === '-') return;
+    let newValue = parseFloat(value);
+    if (!isNaN(newValue)) {
+      newValue = Math.max(0, Math.min(90, newValue));
+      onParameterChange({
+        ...parameters,
+        angle: newValue
+      });
+    }
   };
 
   const handleHeightChange = (e) => {
@@ -59,7 +90,7 @@ const Controls = ({
 
   return (
     <div className="controls">
-      <h2>🎮 Controls</h2>
+      <h2>{gameMode ? '🎮 Game Controls' : '🎮 Controls'}</h2>
 
       <div className="control-group">
         <label htmlFor="velocity">Initial Velocity (m/s)</label>
@@ -67,15 +98,24 @@ const Controls = ({
           <input
             id="velocity"
             type="range"
-            min="10"
-            max="100"
-            step="5"
+            min="1"
+            max="150"
+            step="0.5"
             value={parameters.initialVelocity}
             onChange={handleVelocityChange}
             disabled={simulationRunning}
             className="slider"
           />
-          <span className="value">{parameters.initialVelocity.toFixed(1)}</span>
+          <input
+            type="number"
+            min="1"
+            max="150"
+            step="0.5"
+            value={parameters.initialVelocity.toFixed(1)}
+            onChange={handleVelocityInputChange}
+            disabled={simulationRunning}
+            className="number-input"
+          />
         </div>
       </div>
 
@@ -87,13 +127,22 @@ const Controls = ({
             type="range"
             min="0"
             max="90"
-            step="5"
+            step="0.5"
             value={parameters.angle}
             onChange={handleAngleChange}
             disabled={simulationRunning}
             className="slider"
           />
-          <span className="value">{parameters.angle.toFixed(1)}</span>
+          <input
+            type="number"
+            min="0"
+            max="90"
+            step="0.5"
+            value={parameters.angle.toFixed(1)}
+            onChange={handleAngleInputChange}
+            disabled={simulationRunning}
+            className="number-input"
+          />
         </div>
       </div>
 

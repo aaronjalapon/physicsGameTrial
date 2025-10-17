@@ -75,6 +75,50 @@
   gap: 10px;
 }
 
+.number-input {
+  width: 70px;
+  padding: 8px 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #667eea;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.number-input:hover:not(:disabled) {
+  border-color: #667eea;
+  background-color: #f5f5ff;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: white;
+}
+
+.number-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f9f9f9;
+}
+
+/* Remove spinner buttons for number input */
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.number-input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 @keyframes slideTrack {
   from {
     width: 0;
