@@ -1,8 +1,6 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @keyframes gradientShift {
   0% {
@@ -25,18 +23,17 @@
   }
 }
 
-body {
-  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
-    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  animation: gradientShift 6s ease infinite;
-  background-attachment: fixed;
-}
+@layer base {
+  * {
+    @apply m-0 p-0 box-border;
+  }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  body {
+    @apply font-sans antialiased bg-gradient-to-br from-primary via-primary to-secondary min-h-screen bg-fixed;
+    animation: gradientShift 6s ease infinite;
+  }
+
+  code {
+    @apply font-mono;
+  }
 }

@@ -1,9 +1,6 @@
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @keyframes slideDown {
   from {
@@ -16,6 +13,15 @@
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -23,51 +29,6 @@
   50% {
     opacity: 0.8;
   }
-}
-
-.app-header {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 20px;
-  text-align: center;
-  color: white;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  animation: slideDown 0.6s ease-out;
-  position: relative;
-}
-
-.app-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 5px;
-  animation: float 3s ease-in-out infinite;
-}
-
-.app-header p {
-  font-size: 1rem;
-  opacity: 0.9;
-  animation: pulse 2s ease-in-out infinite;
-  margin-bottom: 10px;
-}
-
-.mode-toggle {
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.mode-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: white;
-  transform: scale(1.05);
 }
 
 @keyframes fadeInScale {
@@ -81,75 +42,78 @@
   }
 }
 
-.app-container {
-  display: flex;
-  flex: 1;
-  gap: 20px;
-  padding: 20px;
-  max-width: 100%;
-}
-
-.left-panel {
-  flex: 0 0 320px;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  overflow-y: auto;
-  animation: fadeInScale 0.5s ease-out 0.1s both;
-}
-
-.center-panel {
-  flex: 1;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 500px;
-  animation: fadeInScale 0.5s ease-out 0.2s both;
-}
-
-.right-panel {
-  flex: 0 0 320px;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  overflow-y: auto;
-  animation: fadeInScale 0.5s ease-out 0.3s both;
-}
-
-@media (max-width: 1200px) {
-  .app-container {
-    flex-wrap: wrap;
+@layer components {
+  .app {
+    @apply flex flex-col h-screen bg-gradient-to-br from-primary via-primary to-secondary;
   }
 
-  .left-panel,
-  .right-panel {
-    flex: 0 0 calc(50% - 10px);
-  }
-
-  .center-panel {
-    flex: 0 0 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .left-panel,
-  .center-panel,
-  .right-panel {
-    flex: 0 0 auto;
+  .app-header {
+    @apply bg-white/10 backdrop-blur-lg px-5 py-5 text-center text-white shadow-lg relative;
+    animation: slideDown 0.6s ease-out;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   }
 
   .app-header h1 {
-    font-size: 1.8rem;
+    @apply text-4xl mb-1;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .app-header p {
+    @apply text-base opacity-90 mb-2;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .mode-toggle {
+    @apply px-5 py-2.5 bg-white/20 text-white border-2 border-white/40 rounded-md cursor-pointer text-sm font-semibold transition-all absolute top-5 right-5 hover:bg-white/30 hover:border-white hover:scale-105;
+  }
+
+  .app-container {
+    @apply flex flex-1 gap-5 p-5 max-w-full;
+  }
+
+  .left-panel {
+    @apply flex-shrink-0 w-80 bg-white rounded-xl p-5 shadow-lg overflow-y-auto;
+    animation: fadeInScale 0.5s ease-out 0.1s both;
+  }
+
+  .center-panel {
+    @apply flex-1 bg-white rounded-xl p-5 shadow-lg flex items-center justify-center min-h-96;
+    animation: fadeInScale 0.5s ease-out 0.2s both;
+  }
+
+  .right-panel {
+    @apply flex-shrink-0 w-80 bg-white rounded-xl p-5 shadow-lg overflow-y-auto;
+    animation: fadeInScale 0.5s ease-out 0.3s both;
+  }
+
+  @media (max-width: 1200px) {
+    .app-container {
+      @apply flex-wrap;
+    }
+
+    .left-panel,
+    .right-panel {
+      @apply flex-shrink-0 w-[calc(50%-10px)];
+    }
+
+    .center-panel {
+      @apply flex-shrink-0 w-full;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .app-container {
+      @apply flex-col gap-4;
+    }
+
+    .left-panel,
+    .center-panel,
+    .right-panel {
+      @apply flex-shrink-0 w-full;
+    }
+
+    .app-header h1 {
+      @apply text-3xl;
+    }
   }
 }
